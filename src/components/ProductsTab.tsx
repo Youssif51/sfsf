@@ -11,6 +11,7 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
   const [data, setData] = useState<ProductStockMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [visibleCount, setVisibleCount] = useState(10);
   
   const [productToEdit, setProductToEdit] = useState<ProductStockMetrics | null>(null);
   const [productToDelete, setProductToDelete] = useState<ProductStockMetrics | null>(null);
@@ -101,7 +102,7 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-textMuted py-8">No products found.</TableCell>
                 </TableRow>
-              ) : filteredData.map((row) => (
+              ) : filteredData.slice(0, visibleCount).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <span className="text-textMuted">📄</span> {row.product_name}
@@ -145,6 +146,27 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
         </div>
       )}
 
+      {!loading && (filteredData.length > visibleCount || visibleCount > 10) && (
+        <div className="mt-4 flex justify-center gap-2">
+          {filteredData.length > visibleCount && (
+            <button 
+              onClick={() => setVisibleCount(prev => prev + 10)}
+              className="text-sm font-medium text-accentBlue hover:text-blue-600 bg-accentBlue/10 hover:bg-accentBlue/20 px-4 py-2 rounded-full transition-colors"
+            >
+              See More ({filteredData.length - visibleCount} remaining)
+            </button>
+          )}
+          {visibleCount > 10 && (
+            <button 
+              onClick={() => setVisibleCount(10)}
+              className="text-sm font-medium text-textMuted hover:text-textMain bg-surfaceHover px-4 py-2 rounded-full transition-colors"
+            >
+              See Less
+            </button>
+          )}
+        </div>
+      )}
+      
       <EditProductModal 
         isOpen={!!productToEdit} 
         onClose={() => setProductToEdit(null)} 

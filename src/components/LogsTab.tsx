@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { StockLog } from '../types/database';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/Table';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, Search } from 'lucide-react';
 import { EditActionModal } from './EditForms';
 import { ConfirmModal } from './ui/ConfirmModal';
 import { useToast } from './ui/Toast';
@@ -10,6 +10,8 @@ import { useToast } from './ui/Toast';
 export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refreshTrigger: number, filter?: 'all' | 'today', onMutation?: () => void }) {
   const [data, setData] = useState<StockLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [search, setSearch] = useState('');
   
   const [recordToEdit, setRecordToEdit] = useState<StockLog | null>(null);
   const [recordToDelete, setRecordToDelete] = useState<StockLog | null>(null);
@@ -49,12 +51,24 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
     }
   };
 
-  const filteredData = filter === 'today'
+  const filteredData = (filter === 'today'
     ? data.filter(log => new Date(log.created_at).toDateString() === new Date().toDateString())
-    : data;
+    : data
+  ).filter(row => row.products?.product_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-4">
+      <div className="flex justify-end">
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-textMuted" />
+          <input
+            placeholder="Search by product name..."
+            className="h-9 w-full rounded-md border border-border bg-background pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-accentBlue"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
       
       {loading && data.length === 0 ? (
         <div className="text-center py-10 text-textMuted animate-pulse">Loading...</div>
@@ -75,7 +89,7 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-textMuted py-8">No records found.</TableCell>
                 </TableRow>
-              ) : filteredData.map((row) => (
+              ) : filteredData.slice(0, visibleCount).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <span className="text-textMuted">📄</span> {row.products?.product_name || 'Unknown'}
@@ -87,7 +101,10 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
                     </span>
                   </TableCell>
                   <TableCell className="text-textMuted text-sm">
-                    {new Date(row.created_at).toLocaleDateString()}
+                    {new Date(row.created_at).toLocaleString('en-GB', { 
+                      day: '2-digit', month: '2-digit', year: 'numeric', 
+                      hour: '2-digit', minute: '2-digit', hour12: true 
+                    })}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -103,6 +120,27 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
               ))}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {!loading && (filteredData.length > visibleCount || visibleCount > 10) && (
+        <div className="mt-4 flex justify-center gap-2">
+          {filteredData.length > visibleCount && (
+            <button 
+              onClick={() => setVisibleCount(prev => prev + 10)}
+              className="text-sm font-medium text-accentBlue hover:text-blue-600 bg-accentBlue/10 hover:bg-accentBlue/20 px-4 py-2 rounded-full transition-colors"
+            >
+              See More ({filteredData.length - visibleCount} remaining)
+            </button>
+          )}
+          {visibleCount > 10 && (
+            <button 
+              onClick={() => setVisibleCount(10)}
+              className="text-sm font-medium text-textMuted hover:text-textMain bg-surfaceHover px-4 py-2 rounded-full transition-colors"
+            >
+              See Less
+            </button>
+          )}
         </div>
       )}
       

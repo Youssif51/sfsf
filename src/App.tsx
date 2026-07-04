@@ -48,7 +48,7 @@ function AppContent() {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
+        <div className="space-y-8">
           {/* Section 2: Add Stock (Inflow) */}
           <section>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">

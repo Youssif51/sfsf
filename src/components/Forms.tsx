@@ -204,9 +204,9 @@ export function QuickActionModal({ isOpen, onClose, onSuccess, type }: QuickActi
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-0 bg-surface/50 p-2 sm:p-4 rounded-xl border border-border shadow-sm">
             {items.map((item, index) => (
-              <div key={index} className="flex gap-3 items-start bg-surfaceHover/30 p-3 rounded-lg border border-border/50">
+              <div key={index} className={`flex gap-3 items-start py-3 ${index !== items.length - 1 ? 'border-b border-border/50' : ''}`}>
                 <div className="flex-1 min-w-0">
                   <SearchableSelect 
                     label={`Product ${index + 1}`}
