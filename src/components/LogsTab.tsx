@@ -7,7 +7,7 @@ import { EditActionModal } from './EditForms';
 import { ConfirmModal } from './ui/ConfirmModal';
 import { useToast } from './ui/Toast';
 
-export function LogsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger: number, filter?: 'all' | 'today' }) {
+export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refreshTrigger: number, filter?: 'all' | 'today', onMutation?: () => void }) {
   const [data, setData] = useState<StockLog[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -44,7 +44,8 @@ export function LogsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger: nu
     } else {
       addToast('Outflow record deleted successfully', 'success');
       setRecordToDelete(null);
-      fetchData();
+      if (onMutation) onMutation();
+      else fetchData();
     }
   };
 
@@ -110,7 +111,7 @@ export function LogsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger: nu
         onClose={() => setRecordToEdit(null)} 
         record={recordToEdit}
         type="outflow"
-        onSuccess={fetchData} 
+        onSuccess={() => { if(onMutation) onMutation(); else fetchData(); }} 
       />
       
       <ConfirmModal

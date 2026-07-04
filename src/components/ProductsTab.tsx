@@ -7,7 +7,7 @@ import { EditProductModal } from './EditForms';
 import { ConfirmModal } from './ui/ConfirmModal';
 import { useToast } from './ui/Toast';
 
-export function ProductsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger: number, filter?: 'all' | 'low_stock' }) {
+export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { refreshTrigger: number, filter?: 'all' | 'low_stock', onMutation?: () => void }) {
   const [data, setData] = useState<ProductStockMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -45,7 +45,8 @@ export function ProductsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger
     } else {
       addToast('Product deleted successfully', 'success');
       setProductToDelete(null);
-      fetchData();
+      if (onMutation) onMutation();
+      else fetchData();
     }
   };
 
@@ -127,7 +128,7 @@ export function ProductsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger
         isOpen={!!productToEdit} 
         onClose={() => setProductToEdit(null)} 
         product={productToEdit}
-        onSuccess={fetchData} 
+        onSuccess={() => { if(onMutation) onMutation(); else fetchData(); }} 
       />
       
       <ConfirmModal

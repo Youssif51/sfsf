@@ -31,8 +31,25 @@ function AppContent() {
 
       <div className="space-y-16">
         
+        {/* Section 1: Stock Alerts */}
+        <section className="bg-dangerBg/5 border border-danger/10 p-6 rounded-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-danger"></div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-danger/20 p-2 rounded-lg text-danger">
+              <span className="text-xl">⚠️</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-textMain">Stock Alerts</h2>
+              <p className="text-sm text-textMuted">Products that have fallen below their minimum required stock level.</p>
+            </div>
+          </div>
+          <div className="bg-surface rounded-xl border border-border shadow-sm">
+            <ProductsTab refreshTrigger={refreshTrigger} filter="low_stock" onMutation={handleSuccess} />
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
-          {/* Section 1: Add Stock (Inflow) */}
+          {/* Section 2: Add Stock (Inflow) */}
           <section>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
@@ -49,11 +66,11 @@ function AppContent() {
               </Button>
             </div>
             <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
-              <AdditionsTab refreshTrigger={refreshTrigger} />
+              <AdditionsTab refreshTrigger={refreshTrigger} onMutation={handleSuccess} />
             </div>
           </section>
 
-          {/* Section 2: Today's Activity (Outflow) */}
+          {/* Section 3: Today's Activity (Outflow) */}
           <section>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
@@ -70,12 +87,12 @@ function AppContent() {
               </Button>
             </div>
             <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
-              <LogsTab refreshTrigger={refreshTrigger} filter="today" />
+              <LogsTab refreshTrigger={refreshTrigger} filter="today" onMutation={handleSuccess} />
             </div>
           </section>
         </div>
 
-        {/* Section 3: All Products */}
+        {/* Section 4: All Products */}
         <section>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-3">
@@ -92,24 +109,7 @@ function AppContent() {
             </Button>
           </div>
           <div className="bg-surface rounded-xl border border-border shadow-sm">
-            <ProductsTab refreshTrigger={refreshTrigger} filter="all" />
-          </div>
-        </section>
-
-        {/* Section 4: Stock Alerts */}
-        <section className="bg-dangerBg/5 border border-danger/10 p-6 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-danger"></div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="bg-danger/20 p-2 rounded-lg text-danger">
-              <span className="text-xl">⚠️</span>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-textMain">Stock Alerts</h2>
-              <p className="text-sm text-textMuted">Products that have fallen below their minimum required stock level.</p>
-            </div>
-          </div>
-          <div className="bg-surface rounded-xl border border-border shadow-sm">
-            <ProductsTab refreshTrigger={refreshTrigger} filter="low_stock" />
+            <ProductsTab refreshTrigger={refreshTrigger} filter="all" onMutation={handleSuccess} />
           </div>
         </section>
 

@@ -7,7 +7,7 @@ import { EditActionModal } from './EditForms';
 import { ConfirmModal } from './ui/ConfirmModal';
 import { useToast } from './ui/Toast';
 
-export function AdditionsTab({ refreshTrigger }: { refreshTrigger: number }) {
+export function AdditionsTab({ refreshTrigger, onMutation }: { refreshTrigger: number, onMutation?: () => void }) {
   const [data, setData] = useState<StockAddition[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -44,7 +44,8 @@ export function AdditionsTab({ refreshTrigger }: { refreshTrigger: number }) {
     } else {
       addToast('Inflow record deleted successfully', 'success');
       setRecordToDelete(null);
-      fetchData();
+      if (onMutation) onMutation();
+      else fetchData();
     }
   };
 
@@ -106,7 +107,7 @@ export function AdditionsTab({ refreshTrigger }: { refreshTrigger: number }) {
         onClose={() => setRecordToEdit(null)} 
         record={recordToEdit}
         type="inflow"
-        onSuccess={fetchData} 
+        onSuccess={() => { if(onMutation) onMutation(); else fetchData(); }} 
       />
       
       <ConfirmModal
