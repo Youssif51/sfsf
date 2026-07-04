@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { supabase } from '../lib/supabase';
 import type { StockLog } from '../types/database';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/Table';
@@ -56,6 +56,17 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
     : data
   ).filter(row => row.products?.product_name.toLowerCase().includes(search.toLowerCase()));
 
+  const visibleRows = filteredData.slice(0, visibleCount);
+  
+  // Group by exact created_at timestamp
+  const groupedData = visibleRows.reduce((acc, row) => {
+    if (!acc[row.created_at]) acc[row.created_at] = [];
+    acc[row.created_at].push(row);
+    return acc;
+  }, {} as Record<string, typeof visibleRows>);
+
+  const sortedGroups = Object.entries(groupedData).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime());
+
   return (
     <div className="p-4 space-y-4">
       <div className="flex justify-end">
@@ -89,34 +100,48 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-textMuted py-8">No records found.</TableCell>
                 </TableRow>
-              ) : filteredData.slice(0, visibleCount).map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium flex items-center gap-2">
-                    <span className="text-textMuted">📄</span> {row.products?.product_name || 'Unknown'}
-                  </TableCell>
-                  <TableCell className="text-right font-mono text-danger">-{row.quantity}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surfaceHover text-textMain border border-border">
-                      {row.log_type}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-textMuted text-sm">
-                    {new Date(row.created_at).toLocaleString('en-GB', { 
-                      day: '2-digit', month: '2-digit', year: 'numeric', 
-                      hour: '2-digit', minute: '2-digit', hour12: true 
-                    })}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <button onClick={() => setRecordToEdit(row)} className="p-1 text-textMuted hover:text-accentBlue transition-colors" title="Edit Record">
-                        <Edit2 size={16} />
-                      </button>
-                      <button onClick={() => setRecordToDelete(row)} className="p-1 text-textMuted hover:text-danger transition-colors" title="Delete Record">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+              ) : sortedGroups.map(([date, rows]) => (
+                <Fragment key={date}>
+                  {rows.map((row, index) => (
+                    <TableRow key={row.id} className={rows.length > 1 ? 'bg-dangerBg/10' : ''}>
+                      <TableCell className="font-medium flex items-center gap-2 relative pl-10">
+                        {rows.length > 1 ? (
+                          <div className="absolute left-0 top-0 bottom-0 w-10 flex flex-col items-center">
+                            <div className={`w-[2px] bg-danger/30 ${index === 0 ? 'h-1/2 mt-auto' : index === rows.length - 1 ? 'h-1/2 mb-auto' : 'h-full'}`}></div>
+                            <div className="w-2 h-2 rounded-full bg-danger absolute top-1/2 -translate-y-1/2 ring-4 ring-surface"></div>
+                          </div>
+                        ) : (
+                          <div className="absolute left-0 top-0 bottom-0 w-10 flex flex-col items-center justify-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-border"></div>
+                          </div>
+                        )}
+                        <span className="text-textMuted">📄</span> {row.products?.product_name || 'Unknown'}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-danger">-{row.quantity}</TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surfaceHover text-textMain border border-border">
+                          {row.log_type}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-textMuted text-sm">
+                        {new Date(row.created_at).toLocaleString('en-GB', { 
+                          day: '2-digit', month: '2-digit', year: 'numeric', 
+                          hour: '2-digit', minute: '2-digit', hour12: true 
+                        })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => setRecordToEdit(row)} className="p-1 text-textMuted hover:text-accentBlue transition-colors" title="Edit Record">
+                            <Edit2 size={16} />
+                          </button>
+                          <button onClick={() => setRecordToDelete(row)} className="p-1 text-textMuted hover:text-danger transition-colors" title="Delete Record">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </Fragment>
               ))}
             </TableBody>
           </Table>
