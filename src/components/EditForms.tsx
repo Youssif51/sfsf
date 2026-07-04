@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
+import { NumberSpinner } from './ui/NumberSpinner';
 import { Select } from './ui/Select';
 import { SearchableSelect } from './ui/SearchableSelect';
 import { Button } from './ui/Button';
@@ -196,13 +197,12 @@ export function EditActionModal({ isOpen, onClose, onSuccess, type, record }: Ed
           onChange={(value) => setFormData({...formData, product_id: value})}
         />
         <div className="grid grid-cols-2 gap-4">
-          <Input 
+          <NumberSpinner 
             label="Quantity" 
-            type="number" 
-            min="1"
+            min={1}
             required 
             value={formData.quantity}
-            onChange={(e) => setFormData({...formData, quantity: parseInt(e.target.value)})}
+            onChange={(val) => setFormData({...formData, quantity: val})}
           />
           <Select 
             label="Type"

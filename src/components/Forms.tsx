@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
+import { NumberSpinner } from './ui/NumberSpinner';
 import { Select } from './ui/Select';
 import { SearchableSelect } from './ui/SearchableSelect';
 import { Button } from './ui/Button';
@@ -203,7 +204,7 @@ export function QuickActionModal({ isOpen, onClose, onSuccess, type }: QuickActi
             </button>
           </div>
 
-          <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 -mr-2">
+          <div className="space-y-3">
             {items.map((item, index) => (
               <div key={index} className="flex gap-3 items-start bg-surfaceHover/30 p-3 rounded-lg border border-border/50">
                 <div className="flex-1 min-w-0">
@@ -215,14 +216,13 @@ export function QuickActionModal({ isOpen, onClose, onSuccess, type }: QuickActi
                     onChange={(value) => handleItemChange(index, 'product_id', value)}
                   />
                 </div>
-                <div className="w-24 shrink-0">
-                  <Input 
+                <div className="w-28 shrink-0">
+                  <NumberSpinner 
                     label="Qty" 
-                    type="number" 
-                    min="1"
+                    min={1}
                     required 
                     value={item.quantity}
-                    onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value) || 1)}
+                    onChange={(val) => handleItemChange(index, 'quantity', val)}
                   />
                 </div>
                 {items.length > 1 && (
