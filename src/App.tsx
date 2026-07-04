@@ -50,17 +50,17 @@ function AppContent() {
 
         {/* Section 2: All Products */}
         <section>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-3">
               <div className="bg-surfaceHover p-2 rounded-lg text-accentBlue">
                 <span className="text-xl">📦</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-textMain">Products Master Database</h2>
-                <p className="text-sm text-textMuted">Overview of all inventory items and their current balances.</p>
+                <h2 className="text-lg sm:text-xl font-bold text-textMain">Products Master Database</h2>
+                <p className="text-xs sm:text-sm text-textMuted">Overview of all inventory items and their current balances.</p>
               </div>
             </div>
-            <Button onClick={() => setAddProductOpen(true)} className="gap-2 shadow-sm">
+            <Button onClick={() => setAddProductOpen(true)} className="w-full sm:w-auto gap-2 shadow-sm bg-accentBlue text-white hover:bg-blue-600">
               <Plus size={18} /> Add New Product
             </Button>
           </div>
@@ -69,21 +69,21 @@ function AppContent() {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
           {/* Section 3: Add Stock (Inflow) */}
           <section>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
-                <div className="bg-successBg p-2 rounded-lg text-success">
+                <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-500">
                   <span className="text-xl">📥</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-textMain">Incoming Stock</h2>
-                  <p className="text-sm text-textMuted">New shipments & returns.</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-textMain">Incoming Stock</h2>
+                  <p className="text-xs sm:text-sm text-textMuted">New shipments & returns.</p>
                 </div>
               </div>
-              <Button onClick={() => setQuickInflowOpen(true)} className="gap-2 bg-success text-white hover:bg-emerald-600" size="sm">
-                <ArrowDownToLine size={16} /> Record Inflow
+              <Button onClick={() => setQuickInflowOpen(true)} className="w-full sm:w-auto gap-2 bg-emerald-600 text-white hover:bg-emerald-500" size="sm">
+                <ArrowDownToLine size={16} /> + Stock In
               </Button>
             </div>
             <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
@@ -93,18 +93,18 @@ function AppContent() {
 
           {/* Section 4: Today's Activity (Outflow) */}
           <section>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
-                <div className="bg-accentOrange/10 p-2 rounded-lg text-accentOrange">
+                <div className="bg-rose-500/10 p-2 rounded-lg text-rose-500">
                   <span className="text-xl">📤</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-textMain">Outgoing Stock</h2>
-                  <p className="text-sm text-textMuted">Today's sales & consumption.</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-textMain">Outgoing Stock</h2>
+                  <p className="text-xs sm:text-sm text-textMuted">Today's sales & consumption.</p>
                 </div>
               </div>
-              <Button onClick={() => setQuickOutflowOpen(true)} className="gap-2 bg-accentOrange text-white hover:bg-orange-600" size="sm">
-                <ArrowUpFromLine size={16} /> Record Outflow
+              <Button onClick={() => setQuickOutflowOpen(true)} className="w-full sm:w-auto gap-2 bg-rose-600 text-white hover:bg-rose-500" size="sm">
+                <ArrowUpFromLine size={16} /> - Stock Out
               </Button>
             </div>
             <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
