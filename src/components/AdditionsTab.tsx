@@ -51,10 +51,10 @@ export function AdditionsTab({ refreshTrigger }: { refreshTrigger: number }) {
   return (
     <div className="p-4">
       
-      {loading ? (
+      {loading && data.length === 0 ? (
         <div className="text-center py-10 text-textMuted animate-pulse">Loading...</div>
       ) : (
-        <div className="rounded-md border border-border overflow-x-auto">
+        <div className={`rounded-md border border-border overflow-x-auto transition-opacity ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
           <Table>
             <TableHeader>
               <TableRow>
