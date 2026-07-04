@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { ProductStockMetrics } from '../types/database';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/Table';

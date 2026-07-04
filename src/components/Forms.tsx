@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
 import { Button } from './ui/Button';
 import { useToast } from './ui/Toast';
 import { supabase } from '../lib/supabase';
-import type { Product } from '../types/database';
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -98,7 +97,7 @@ interface QuickActionModalProps {
 export function QuickActionModal({ isOpen, onClose, onSuccess, type }: QuickActionModalProps) {
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<{id: string, product_name: string}[]>([]);
   const [formData, setFormData] = useState({
     product_id: '',
     quantity: 1,
