@@ -4,7 +4,7 @@ import type { ProductStockMetrics } from '../types/database';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/Table';
 import { Search } from 'lucide-react';
 
-export function ProductsTab({ refreshTrigger }: { refreshTrigger: number }) {
+export function ProductsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger: number, filter?: 'all' | 'low_stock' }) {
   const [data, setData] = useState<ProductStockMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -26,17 +26,18 @@ export function ProductsTab({ refreshTrigger }: { refreshTrigger: number }) {
     fetchData();
   }, [refreshTrigger]);
 
-  const filteredData = data.filter(p => p.product_name.toLowerCase().includes(search.toLowerCase()));
+  const filteredData = data
+    .filter(p => filter === 'all' || p.stock_status.includes('Low'))
+    .filter(p => p.product_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold flex items-center gap-2">All Products</h2>
-        <div className="relative w-64">
+    <div className="space-y-4 p-4">
+      <div className="flex justify-end">
+        <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-textMuted" />
           <input
             placeholder="Search products..."
-            className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-accentBlue"
+            className="h-9 w-full rounded-md border border-border bg-background pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-accentBlue"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

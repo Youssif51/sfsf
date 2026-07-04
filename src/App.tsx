@@ -6,10 +6,9 @@ import { LogsTab } from './components/LogsTab';
 import { ToastProvider } from './components/ui/Toast';
 import { Button } from './components/ui/Button';
 import { AddProductModal, QuickActionModal } from './components/Forms';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState<'products' | 'additions' | 'logs'>('products');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   // Modal states
@@ -22,22 +21,99 @@ function AppContent() {
   };
 
   return (
-    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
-      <div className="flex justify-end gap-2 mb-6">
-        <Button onClick={() => setAddProductOpen(true)} className="gap-2">
-          <Plus size={18} /> New Product
-        </Button>
-        <Button onClick={() => setQuickInflowOpen(true)} variant="secondary">
-          Quick Inflow
-        </Button>
-        <Button onClick={() => setQuickOutflowOpen(true)} variant="secondary">
-          Quick Outflow
-        </Button>
+    <Layout>
+      <div className="mb-8 border-b border-border pb-6">
+        <h1 className="text-3xl font-extrabold text-textMain tracking-tight">Inventory Dashboard</h1>
+        <p className="text-textMuted mt-2 text-sm">
+         اهلاً بالمعلم صفصف وأعوانة 
+        </p>
       </div>
 
-      {activeTab === 'products' && <ProductsTab refreshTrigger={refreshTrigger} />}
-      {activeTab === 'additions' && <AdditionsTab refreshTrigger={refreshTrigger} />}
-      {activeTab === 'logs' && <LogsTab refreshTrigger={refreshTrigger} />}
+      <div className="space-y-16">
+        
+        {/* Section 1: Stock Alerts */}
+        <section className="bg-dangerBg/5 border border-danger/10 p-6 rounded-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-danger"></div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-danger/20 p-2 rounded-lg text-danger">
+              <span className="text-xl">⚠️</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-textMain">Stock Alerts</h2>
+              <p className="text-sm text-textMuted">Products that have fallen below their minimum required stock level.</p>
+            </div>
+          </div>
+          <div className="bg-surface rounded-xl border border-border shadow-sm">
+            <ProductsTab refreshTrigger={refreshTrigger} filter="low_stock" />
+          </div>
+        </section>
+
+        {/* Section 2: All Products */}
+        <section>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-surfaceHover p-2 rounded-lg text-accentBlue">
+                <span className="text-xl">📦</span>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-textMain">Products Master Database</h2>
+                <p className="text-sm text-textMuted">Overview of all inventory items and their current balances.</p>
+              </div>
+            </div>
+            <Button onClick={() => setAddProductOpen(true)} className="gap-2 shadow-sm">
+              <Plus size={18} /> Add New Product
+            </Button>
+          </div>
+          <div className="bg-surface rounded-xl border border-border shadow-sm">
+            <ProductsTab refreshTrigger={refreshTrigger} filter="all" />
+          </div>
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Section 3: Add Stock (Inflow) */}
+          <section>
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-successBg p-2 rounded-lg text-success">
+                  <span className="text-xl">📥</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-textMain">Incoming Stock</h2>
+                  <p className="text-sm text-textMuted">New shipments & returns.</p>
+                </div>
+              </div>
+              <Button onClick={() => setQuickInflowOpen(true)} className="gap-2 bg-success text-white hover:bg-emerald-600" size="sm">
+                <ArrowDownToLine size={16} /> Record Inflow
+              </Button>
+            </div>
+            <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
+              <AdditionsTab refreshTrigger={refreshTrigger} />
+            </div>
+          </section>
+
+          {/* Section 4: Today's Activity (Outflow) */}
+          <section>
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-accentOrange/10 p-2 rounded-lg text-accentOrange">
+                  <span className="text-xl">📤</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-textMain">Outgoing Stock</h2>
+                  <p className="text-sm text-textMuted">Today's sales & consumption.</p>
+                </div>
+              </div>
+              <Button onClick={() => setQuickOutflowOpen(true)} className="gap-2 bg-accentOrange text-white hover:bg-orange-600" size="sm">
+                <ArrowUpFromLine size={16} /> Record Outflow
+              </Button>
+            </div>
+            <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
+              <LogsTab refreshTrigger={refreshTrigger} filter="today" />
+            </div>
+          </section>
+        </div>
+
+      </div>
 
       <AddProductModal 
         isOpen={isAddProductOpen} 

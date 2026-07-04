@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import type { StockLog } from '../types/database';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/Table';
 
-export function LogsTab({ refreshTrigger }: { refreshTrigger: number }) {
+export function LogsTab({ refreshTrigger, filter = 'all' }: { refreshTrigger: number, filter?: 'all' | 'today' }) {
   const [data, setData] = useState<StockLog[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,9 +27,12 @@ export function LogsTab({ refreshTrigger }: { refreshTrigger: number }) {
     fetchData();
   }, [refreshTrigger]);
 
+  const filteredData = filter === 'today'
+    ? data.filter(log => new Date(log.created_at).toDateString() === new Date().toDateString())
+    : data;
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Stock Log (Outflow)</h2>
+    <div className="p-4">
       
       {loading ? (
         <div className="text-center py-10 text-textMuted animate-pulse">Loading...</div>
@@ -45,11 +48,11 @@ export function LogsTab({ refreshTrigger }: { refreshTrigger: number }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.length === 0 ? (
+            {filteredData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-textMuted py-8">No records found.</TableCell>
               </TableRow>
-            ) : data.map((row) => (
+            ) : filteredData.map((row) => (
               <TableRow key={row.id}>
                 <TableCell className="font-medium flex items-center gap-2">
                   <span className="text-textMuted">📄</span> {row.products?.product_name || 'Unknown'}

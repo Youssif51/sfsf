@@ -28,8 +28,7 @@ export function AdditionsTab({ refreshTrigger }: { refreshTrigger: number }) {
   }, [refreshTrigger]);
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Stock Additions</h2>
+    <div className="p-4">
       
       {loading ? (
         <div className="text-center py-10 text-textMuted animate-pulse">Loading...</div>

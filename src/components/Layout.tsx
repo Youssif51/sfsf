@@ -1,20 +1,12 @@
 import React from 'react';
-import { Package, PlusCircle, History, Menu } from 'lucide-react';
+import { Package, Menu } from 'lucide-react';
 import { cn } from './ui/Modal';
 
 interface LayoutProps {
   children: React.ReactNode;
-  activeTab: 'products' | 'additions' | 'logs';
-  onTabChange: (tab: 'products' | 'additions' | 'logs') => void;
 }
 
-export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
-  const tabs = [
-    { id: 'products', label: 'Products Database', icon: Package },
-    { id: 'additions', label: 'Stock Additions', icon: PlusCircle },
-    { id: 'logs', label: 'Stock Log', icon: History },
-  ] as const;
-
+export function Layout({ children }: LayoutProps) {
   return (
     <div className="flex h-screen w-full bg-background overflow-hidden">
       {/* Sidebar */}
@@ -26,25 +18,10 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           </h1>
         </div>
         <nav className="flex-1 px-4 flex flex-col gap-2">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium",
-                  isActive 
-                    ? "bg-surfaceHover text-textMain" 
-                    : "text-textMuted hover:bg-surfaceHover/50 hover:text-textMain"
-                )}
-              >
-                <Icon size={18} className={isActive ? "text-accentBlue" : ""} />
-                {tab.label}
-              </button>
-            );
-          })}
+          <button className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium bg-surfaceHover text-textMain">
+            <Package size={18} className="text-accentBlue" />
+            Inventory Dashboard
+          </button>
         </nav>
       </aside>
 
@@ -59,7 +36,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
         </header>
 
         <div className="flex-1 overflow-auto p-4 md:p-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-12">
             {children}
           </div>
         </div>
