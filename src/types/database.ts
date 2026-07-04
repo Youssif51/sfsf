@@ -33,6 +33,7 @@ export type ProductStockMetrics = {
   initial_stock: number;
   min_stock: number;
   unit: string;
+  is_alert_acknowledged: boolean;
   created_at: string;
   total_added: number;
   total_consumed: number;

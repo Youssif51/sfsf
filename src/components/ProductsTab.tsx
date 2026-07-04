@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { ProductStockMetrics } from '../types/database';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/Table';
-import { Search, Edit2, Trash2 } from 'lucide-react';
+import { Search, Edit2, Trash2, BellOff } from 'lucide-react';
 import { EditProductModal } from './EditForms';
 import { ConfirmModal } from './ui/ConfirmModal';
 import { useToast } from './ui/Toast';
@@ -34,6 +34,17 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
     fetchData();
   }, [refreshTrigger]);
 
+  const handleDismissAlert = async (id: string) => {
+    const { error } = await supabase.from('products').update({ is_alert_acknowledged: true }).eq('id', id);
+    if (error) {
+      addToast(error.message, 'error');
+    } else {
+      addToast('Alert dismissed successfully', 'success');
+      if (onMutation) onMutation();
+      else fetchData();
+    }
+  };
+
   const handleDelete = async () => {
     if (!productToDelete) return;
     setIsDeleting(true);
@@ -50,9 +61,10 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
     }
   };
 
-  const filteredData = data
-    .filter(p => filter === 'all' || p.stock_status.includes('Low'))
-    .filter(p => p.product_name.toLowerCase().includes(search.toLowerCase()));
+  const filteredData = (filter === 'low_stock' 
+    ? data.filter(p => p.current_stock <= p.min_stock && !p.is_alert_acknowledged)
+    : data
+  ).filter(p => p.product_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-4 p-4">
@@ -98,7 +110,11 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
                   <TableCell className="text-right font-mono text-textMuted hidden sm:table-cell">{row.initial_stock}</TableCell>
                   <TableCell className="text-right font-mono text-textMuted hidden sm:table-cell">{row.min_stock}</TableCell>
                   <TableCell className="text-center">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${row.stock_status.includes('Low') ? 'bg-dangerBg text-danger' : 'bg-successBg text-success'}`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                      row.stock_status.includes('Reported') ? 'bg-surfaceHover text-textMuted border border-border' :
+                      row.stock_status.includes('Low') || row.stock_status.includes('Out') ? 'bg-dangerBg text-danger' : 
+                      'bg-successBg text-success'
+                    }`}>
                       {row.stock_status}
                     </span>
                   </TableCell>
@@ -109,6 +125,11 @@ export function ProductsTab({ refreshTrigger, filter = 'all', onMutation }: { re
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
+                      {row.current_stock <= row.min_stock && !row.is_alert_acknowledged && (
+                        <button onClick={() => handleDismissAlert(row.id)} className="p-1 text-textMuted hover:text-accentOrange transition-colors" title="Dismiss Alert">
+                          <BellOff size={16} />
+                        </button>
+                      )}
                       <button onClick={() => setProductToEdit(row)} className="p-1 text-textMuted hover:text-accentBlue transition-colors" title="Edit Product">
                         <Edit2 size={16} />
                       </button>
