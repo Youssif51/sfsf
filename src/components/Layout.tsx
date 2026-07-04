@@ -13,7 +13,7 @@ export function Layout({ children }: LayoutProps) {
         <div className="p-6">
           <h1 className="text-xl font-bold flex items-center gap-2">
             <span className="bg-accentOrange text-white p-1 rounded-md"><Package size={20} /></span>
-            Inventory OS
+            ورشة المعلم صفصف
           </h1>
         </div>
         <nav className="flex-1 px-4 flex flex-col gap-2">
@@ -31,7 +31,7 @@ export function Layout({ children }: LayoutProps) {
           <button className="p-2 -ml-2 text-textMuted">
             <Menu size={24} />
           </button>
-          <span className="font-semibold ml-2">Inventory OS</span>
+          <span className="font-semibold ml-2">ورشة المعلم صفصف</span>
         </header>
 
         <div className="flex-1 overflow-auto p-4 md:p-8">
