@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
+import { SearchableSelect } from './ui/SearchableSelect';
 import { Button } from './ui/Button';
 import { useToast } from './ui/Toast';
 import { supabase } from '../lib/supabase';
@@ -187,12 +188,12 @@ export function EditActionModal({ isOpen, onClose, onSuccess, type, record }: Ed
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={type === 'inflow' ? 'Edit Inflow' : 'Edit Outflow'}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Select 
+        <SearchableSelect 
           label="Select Product"
           required
-          options={[ { value: '', label: 'Select a product...' }, ...products.map(p => ({ value: p.id, label: p.product_name })) ]}
+          options={products.map(p => ({ value: p.id, label: p.product_name }))}
           value={formData.product_id}
-          onChange={(e) => setFormData({...formData, product_id: e.target.value})}
+          onChange={(value) => setFormData({...formData, product_id: value})}
         />
         <div className="grid grid-cols-2 gap-4">
           <Input 
