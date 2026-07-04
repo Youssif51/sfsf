@@ -49,28 +49,7 @@ function AppContent() {
         </section>
 
         <div className="space-y-8">
-          {/* Section 2: Add Stock (Inflow) */}
-          <section>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
-              <div className="flex items-center gap-3">
-                <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-500">
-                  <span className="text-xl">📥</span>
-                </div>
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-textMain">Incoming Stock</h2>
-                  <p className="text-xs sm:text-sm text-textMuted">New shipments & returns.</p>
-                </div>
-              </div>
-              <Button onClick={() => setQuickInflowOpen(true)} className="w-full sm:w-auto gap-2 bg-emerald-600 text-white hover:bg-emerald-500" size="sm">
-                <ArrowDownToLine size={16} /> + Stock In
-              </Button>
-            </div>
-            <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
-              <AdditionsTab refreshTrigger={refreshTrigger} onMutation={handleSuccess} />
-            </div>
-          </section>
-
-          {/* Section 3: Today's Activity (Outflow) */}
+          {/* Section 2: Today's Activity (Outflow) */}
           <section>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <div className="flex items-center gap-3">
@@ -88,6 +67,27 @@ function AppContent() {
             </div>
             <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
               <LogsTab refreshTrigger={refreshTrigger} filter="today" onMutation={handleSuccess} />
+            </div>
+          </section>
+
+          {/* Section 3: Add Stock (Inflow) */}
+          <section>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-emerald-500/10 p-2 rounded-lg text-emerald-500">
+                  <span className="text-xl">📥</span>
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-textMain">Incoming Stock</h2>
+                  <p className="text-xs sm:text-sm text-textMuted">New shipments & returns.</p>
+                </div>
+              </div>
+              <Button onClick={() => setQuickInflowOpen(true)} className="w-full sm:w-auto gap-2 bg-emerald-600 text-white hover:bg-emerald-500" size="sm">
+                <ArrowDownToLine size={16} /> + Stock In
+              </Button>
+            </div>
+            <div className="bg-surface rounded-xl border border-border shadow-sm p-1">
+              <AdditionsTab refreshTrigger={refreshTrigger} onMutation={handleSuccess} />
             </div>
           </section>
         </div>
