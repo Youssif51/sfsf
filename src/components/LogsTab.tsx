@@ -12,6 +12,7 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(10);
   const [search, setSearch] = useState('');
+  const [timeFilter, setTimeFilter] = useState<'today' | 'yesterday' | 'week' | 'all'>(filter === 'today' ? 'today' : 'all');
   
   const [recordToEdit, setRecordToEdit] = useState<StockLog | null>(null);
   const [recordToDelete, setRecordToDelete] = useState<StockLog | null>(null);
@@ -51,10 +52,21 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
     }
   };
 
-  const filteredData = (filter === 'today'
-    ? data.filter(log => new Date(log.created_at).toDateString() === new Date().toDateString())
-    : data
-  ).filter(row => row.products?.product_name.toLowerCase().includes(search.toLowerCase()));
+  const now = new Date();
+  const todayString = now.toDateString();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayString = yesterday.toDateString();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const filteredData = data.filter(log => {
+    const logDate = new Date(log.created_at);
+    if (timeFilter === 'today' && logDate.toDateString() !== todayString) return false;
+    if (timeFilter === 'yesterday' && logDate.toDateString() !== yesterdayString) return false;
+    if (timeFilter === 'week' && logDate < sevenDaysAgo) return false;
+    return true;
+  }).filter(row => row.products?.product_name.toLowerCase().includes(search.toLowerCase()));
 
   const visibleRows = filteredData.slice(0, visibleCount);
   
@@ -69,7 +81,17 @@ export function LogsTab({ refreshTrigger, filter = 'all', onMutation }: { refres
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-col sm:flex-row justify-end gap-3">
+        <select 
+          value={timeFilter} 
+          onChange={(e) => setTimeFilter(e.target.value as any)}
+          className="h-9 rounded-md border border-border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-accentBlue"
+        >
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="week">Last 7 Days</option>
+          <option value="all">All Time</option>
+        </select>
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-textMuted" />
           <input

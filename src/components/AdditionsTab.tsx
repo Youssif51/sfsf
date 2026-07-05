@@ -12,6 +12,7 @@ export function AdditionsTab({ refreshTrigger, onMutation }: { refreshTrigger: n
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(10);
   const [search, setSearch] = useState('');
+  const [timeFilter, setTimeFilter] = useState<'today' | 'yesterday' | 'week' | 'all'>('all');
   
   const [recordToEdit, setRecordToEdit] = useState<StockAddition | null>(null);
   const [recordToDelete, setRecordToDelete] = useState<StockAddition | null>(null);
@@ -51,9 +52,21 @@ export function AdditionsTab({ refreshTrigger, onMutation }: { refreshTrigger: n
     }
   };
 
-  const filteredData = data.filter(row => 
-    row.products?.product_name.toLowerCase().includes(search.toLowerCase())
-  );
+  const now = new Date();
+  const todayString = now.toDateString();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayString = yesterday.toDateString();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const filteredData = data.filter(log => {
+    const logDate = new Date(log.created_at);
+    if (timeFilter === 'today' && logDate.toDateString() !== todayString) return false;
+    if (timeFilter === 'yesterday' && logDate.toDateString() !== yesterdayString) return false;
+    if (timeFilter === 'week' && logDate < sevenDaysAgo) return false;
+    return true;
+  }).filter(row => row.products?.product_name.toLowerCase().includes(search.toLowerCase()));
 
   const visibleRows = filteredData.slice(0, visibleCount);
   
@@ -68,7 +81,17 @@ export function AdditionsTab({ refreshTrigger, onMutation }: { refreshTrigger: n
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-col sm:flex-row justify-end gap-3">
+        <select 
+          value={timeFilter} 
+          onChange={(e) => setTimeFilter(e.target.value as any)}
+          className="h-9 rounded-md border border-border bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-accentBlue"
+        >
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="week">Last 7 Days</option>
+          <option value="all">All Time</option>
+        </select>
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-textMuted" />
           <input
